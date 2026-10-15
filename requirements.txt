@@ -1,0 +1,13 @@
+PyMuPDF
+sentence-transformers
+faiss-cpu
+langchain
+langgraph
+langchain-community
+langchain-openai
+openai
+fastapi
+uvicorn
+python-dotenv
+pydantic
+python-multipart

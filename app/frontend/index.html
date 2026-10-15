@@ -1,0 +1,1037 @@
+D<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qanoon AI | Pakistani Law Assistant</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0c0e14;
+            --panel: #11141d;
+            --panel-light: #171b27;
+            --border: rgba(255,255,255,.085);
+            --text: #f0f1f7;
+            --muted: #9299ad;
+            --green: #b8f28b;
+            --purple: #b9a7ff;
+            --user: #252b3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        button, textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .app {
+            height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 255px;
+            flex-shrink: 0;
+            background: #0f1118;
+            border-right: 1px solid var(--border);
+            padding: 23px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 7px;
+        }
+
+        .brand-icon {
+            height: 40px;
+            width: 40px;
+            border-radius: 13px;
+            background: linear-gradient(145deg, #c7ff9c, #8ddf9c);
+            color: #142117;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            font-weight: 700;
+            box-shadow: 0 0 25px rgba(184,242,139,.12);
+        }
+
+        .brand-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -.7px;
+        }
+
+        .brand-name span {
+            color: var(--green);
+        }
+
+        .new-chat {
+            border: 1px solid rgba(184,242,139,.25);
+            background: rgba(184,242,139,.07);
+            color: var(--green);
+            padding: 13px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: .2s;
+            font-weight: 600;
+        }
+
+        .new-chat:hover {
+            background: rgba(184,242,139,.14);
+            transform: translateY(-1px);
+        }
+
+        .side-label {
+            font-size: 10px;
+            color: #71788b;
+            letter-spacing: 1.8px;
+            font-weight: 700;
+            padding: 0 9px;
+            margin-bottom: -12px;
+        }
+
+        .side-info {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: rgba(255,255,255,.018);
+        }
+
+        .side-info .info-icon {
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+        .side-info h3 {
+            font-size: 13px;
+            margin: 0 0 7px;
+            font-weight: 600;
+        }
+
+        .side-info p {
+            font-size: 11px;
+            line-height: 1.8;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .side-bottom {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding: 16px 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--green);
+            background: #252b38;
+            font-weight: 700;
+        }
+
+        .side-bottom strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .side-bottom small {
+            display: block;
+            font-size: 10px;
+            margin-top: 4px;
+            color: var(--muted);
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .topbar {
+            height: 72px;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .top-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .top-subtitle {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .online {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: #c6cbd7;
+            font-size: 11px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 9px rgba(184,242,139,.6);
+        }
+
+        /* CHAT AREA */
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 32px 20px 25px;
+        }
+
+        .chat-inner {
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0 35px;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            align-self: flex-start;
+            padding: 8px 12px;
+            background: rgba(184,242,139,.07);
+            border: 1px solid rgba(184,242,139,.16);
+            border-radius: 30px;
+            color: var(--green);
+            font-size: 11px;
+            margin-bottom: 23px;
+        }
+
+        .welcome h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(32px, 4vw, 47px);
+            line-height: 1.16;
+            letter-spacing: -2px;
+            margin: 0 0 17px;
+            font-weight: 600;
+        }
+
+        .welcome h1 span {
+            color: var(--green);
+        }
+
+        .welcome > p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.9;
+            max-width: 510px;
+            margin: 0 0 34px;
+        }
+
+        .suggestion-label {
+            color: #747b8f;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 13px;
+        }
+
+        .suggestions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .suggestion {
+            text-align: left;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--text);
+            transition: .2s;
+            min-height: 105px;
+        }
+
+        .suggestion:hover {
+            border-color: rgba(184,242,139,.4);
+            background: #171d25;
+            transform: translateY(-2px);
+        }
+
+        .suggestion .s-icon {
+            display: block;
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+
+        .suggestion strong {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .suggestion small {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* MESSAGES */
+
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 27px;
+            padding-bottom: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            animation: appear .25s ease;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .assistant-avatar {
+            color: #152017;
+            background: var(--green);
+        }
+
+        .user-avatar {
+            background: #29263b;
+            color: var(--purple);
+        }
+
+        .message-content {
+            min-width: 0;
+            max-width: calc(100% - 45px);
+        }
+
+        .message-name {
+            font-size: 11px;
+            font-weight: 700;
+            margin: 2px 0 9px;
+            color: #dfe2ec;
+        }
+
+        .user .message-name {
+            text-align: right;
+        }
+
+        .bubble {
+            font-size: 13px;
+            line-height: 1.9;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .user .bubble {
+            background: var(--user);
+            padding: 12px 16px;
+            border-radius: 17px 5px 17px 17px;
+            color: #f0f1f7;
+        }
+
+        .assistant .bubble {
+            color: #d7dbe6;
+        }
+
+        .sources {
+            margin-top: 15px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            overflow: hidden;
+            background: rgba(255,255,255,.018);
+        }
+
+        .sources summary {
+            cursor: pointer;
+            padding: 11px 13px;
+            color: #b9c0d0;
+            font-size: 11px;
+            user-select: none;
+        }
+
+        .sources summary:hover {
+            color: var(--green);
+        }
+
+        .source-list {
+            padding: 0 13px 13px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .source-item {
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.025);
+            margin-top: 8px;
+        }
+
+        .message-meta {
+            font-size: 10px;
+            color: #737b8e;
+            margin-top: 11px;
+        }
+
+        .typing {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 9px 0;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        .typing span:nth-child(2) { animation-delay: .15s; }
+        .typing span:nth-child(3) { animation-delay: .3s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* COMPOSER */
+
+        .composer-wrap {
+            padding: 12px 20px 18px;
+            background: linear-gradient(transparent, var(--bg) 16%);
+            flex-shrink: 0;
+        }
+
+        .composer-inner {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .composer {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            background: #171a24;
+            border: 1px solid #303545;
+            padding: 13px 13px 13px 18px;
+            border-radius: 18px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .composer:focus-within {
+            border-color: rgba(184,242,139,.45);
+            box-shadow: 0 0 0 3px rgba(184,242,139,.035);
+        }
+
+        #questionInput {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            outline: none;
+            resize: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.7;
+            max-height: 150px;
+            min-height: 26px;
+            padding: 3px 0;
+        }
+
+        #questionInput::placeholder {
+            color: #7d8498;
+        }
+
+        .send-btn {
+            height: 39px;
+            width: 39px;
+            flex-shrink: 0;
+            border: none;
+            border-radius: 12px;
+            background: var(--green);
+            color: #172217;
+            font-size: 19px;
+            display: grid;
+            place-items: center;
+            transition: .2s;
+        }
+
+        .send-btn:hover {
+            background: #d1ffad;
+            transform: translateY(-1px);
+        }
+
+        .send-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .composer-hint {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 11px 4px 0;
+            color: #777e91;
+            font-size: 10px;
+        }
+
+        .composer-hint strong {
+            color: #a8afc0;
+            font-weight: 500;
+        }
+
+        .toast {
+            position: absolute;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 11px 16px;
+            background: #2b2025;
+            color: #ffb8be;
+            border: 1px solid rgba(255,150,160,.18);
+            border-radius: 10px;
+            font-size: 12px;
+            z-index: 5;
+            display: none;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 760px) {
+            .sidebar {
+                display: none;
+            }
+
+            .topbar {
+                height: 65px;
+                padding: 0 16px;
+            }
+
+            .chat-area {
+                padding: 22px 16px;
+            }
+
+            .composer-wrap {
+                padding: 8px 12px 13px;
+            }
+
+            .welcome h1 {
+                letter-spacing: -1.4px;
+            }
+
+            .suggestions {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .suggestion {
+                min-height: auto;
+                padding: 13px;
+            }
+
+            .suggestion .s-icon {
+                margin-bottom: 7px;
+            }
+
+            .composer-hint {
+                font-size: 9px;
+            }
+
+            .online {
+                padding: 7px 9px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">§</div>
+            <div class="brand-name">Qanoon<span>AI.</span></div>
+        </div>
+
+        <button class="new-chat" id="newChatBtn">
+            <span>＋</span> New conversation
+        </button>
+
+        <div class="side-label">YOUR LEGAL ASSISTANT</div>
+
+        <div class="side-info">
+            <div class="info-icon">⚖️</div>
+            <h3>Pakistani Law Assistant</h3>
+            <p>
+                Ask questions about the Islamabad Capital Territory
+                Child Marriage Restraint Act, 2025.
+            </p>
+        </div>
+
+        <div class="side-info">
+            <div class="info-icon">✦</div>
+            <h3>Grounded answers</h3>
+            <p>
+                Answers are generated using relevant passages retrieved
+                from the legal document.
+            </p>
+        </div>
+
+        <div class="side-bottom">
+            <div class="avatar">Q</div>
+            <div>
+                <strong>Qanoon AI</strong>
+                <small>Legal information assistant</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <div class="top-title">Legal Research Assistant</div>
+                <div class="top-subtitle">Islamabad Capital Territory · Child Marriage Restraint Act, 2025</div>
+            </div>
+
+            <div class="online">
+                <span class="online-dot"></span>
+                AI Assistant
+            </div>
+        </header>
+
+        <div class="toast" id="toast"></div>
+
+        <section class="chat-area" id="chatArea">
+            <div class="chat-inner">
+                <div class="welcome" id="welcome">
+                    <div class="welcome-badge">✦ &nbsp; YOUR LEGAL KNOWLEDGE COMPANION</div>
+
+                    <h1>Understand the law.<br><span>Ask with confidence.</span></h1>
+
+                    <p>
+                        Explore the Child Marriage Restraint Act, 2025 through
+                        natural conversation. Ask a question, get an answer,
+                        and explore the legal sources whenever you need them.
+                    </p>
+
+                    <div class="suggestion-label">GET STARTED WITH A QUESTION</div>
+
+                    <div class="suggestions">
+                        <button class="suggestion" data-question="What is the minimum legal age for marriage under this Act?">
+                            <span class="s-icon">⚖️</span>
+                            <strong>Minimum legal age</strong>
+                            <small>Understand the age requirements in the Act.</small>
+                        </button>
+
+                        <button class="suggestion" data-question="What is the main purpose of the Child Marriage Restraint Act, 2025?">
+                            <span class="s-icon">📘</span>
+                            <strong>Purpose of the Act</strong>
+                            <small>Learn why this legislation was introduced.</small>
+                        </button>
+
+                        <button class="suggestion" data-question="What punishments are specified in the Act for child marriage?">
+                            <span class="s-icon">🔎</span>
+                            <strong>Penalties and offences</strong>
+                            <small>Explore the penalties described in the document.</small>
+                        </button>
+
+                        <button class="suggestion" data-question="What responsibilities does the Act assign to marriage registrars?">
+                            <span class="s-icon">📄</span>
+                            <strong>Marriage registrars</strong>
+                            <small>Find the duties mentioned in the law.</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="messages" id="messages"></div>
+            </div>
+        </section>
+
+        <footer class="composer-wrap">
+            <div class="composer-inner">
+                <form class="composer" id="chatForm">
+                    <textarea
+                        id="questionInput"
+                        rows="1"
+                        placeholder="Ask a question about the law..."
+                        aria-label="Type your legal question"
+                        required
+                    ></textarea>
+
+                    <button class="send-btn" id="sendBtn" type="submit" aria-label="Send message">
+                        ↑
+                    </button>
+                </form>
+
+                <div class="composer-hint">
+                    <span><strong>Enter</strong> to send · <strong>Shift + Enter</strong> for a new line</span>
+                    <span>AI can make mistakes. Verify important legal information.</span>
+                </div>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<script>
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("questionInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const messages = document.getElementById("messages");
+    const welcome = document.getElementById("welcome");
+    const chatArea = document.getElementById("chatArea");
+    const newChatBtn = document.getElementById("newChatBtn");
+    const toast = document.getElementById("toast");
+
+    let isSending = false;
+    let toastTimer;
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 4500);
+    }
+
+    function scrollToBottom() {
+        requestAnimationFrame(() => {
+            chatArea.scrollTop = chatArea.scrollHeight;
+        });
+    }
+
+    function addMessage(role, text, options = {}) {
+        welcome.style.display = "none";
+
+        const message = document.createElement("div");
+        message.className = `message ${role}`;
+
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar " +
+            (role === "user" ? "user-avatar" : "assistant-avatar");
+        avatar.textContent = role === "user" ? "U" : "✦";
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+
+        const name = document.createElement("div");
+        name.className = "message-name";
+        name.textContent = role === "user" ? "You" : "Qanoon AI";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+
+        content.appendChild(name);
+        content.appendChild(bubble);
+
+        if (role === "assistant" && options.sources !== undefined) {
+            const sourceDetails = document.createElement("details");
+            sourceDetails.className = "sources";
+
+            const summary = document.createElement("summary");
+            const sourceCount = Array.isArray(options.sources)
+                ? options.sources.length
+                : 0;
+
+            summary.textContent = sourceCount
+                ? `📚 View sources (${sourceCount})`
+                : "📚 Source information";
+
+            sourceDetails.appendChild(summary);
+
+            const sourceList = document.createElement("div");
+            sourceList.className = "source-list";
+
+            if (sourceCount > 0) {
+                options.sources.forEach((source, index) => {
+                    const item = document.createElement("div");
+                    item.className = "source-item";
+
+                    let sourceText;
+
+                    if (typeof source === "string") {
+                        sourceText = source;
+                    } else if (source && typeof source === "object") {
+                        sourceText =
+                            source.page_content ||
+                            source.content ||
+                            source.text ||
+                            source.document ||
+                            JSON.stringify(source, null, 2);
+                    } else {
+                        sourceText = String(source);
+                    }
+
+                    item.textContent = `Source ${index + 1}\n${sourceText}`;
+                    sourceList.appendChild(item);
+                });
+            } else {
+                sourceList.textContent =
+                    "No source details were returned by the API.";
+            }
+
+            sourceDetails.appendChild(sourceList);
+            content.appendChild(sourceDetails);
+        }
+
+        if (role === "assistant" && options.timings) {
+            const meta = document.createElement("div");
+            meta.className = "message-meta";
+
+            const parts = [];
+
+            if (Number.isFinite(Number(options.timings.retrieval))) {
+                parts.push(
+                    `Retrieval: ${Math.round(Number(options.timings.retrieval))} ms`
+                );
+            }
+
+            if (Number.isFinite(Number(options.timings.generation))) {
+                parts.push(
+                    `Generation: ${Math.round(Number(options.timings.generation))} ms`
+                );
+            }
+
+            meta.textContent = parts.join(" · ");
+            if (parts.length) content.appendChild(meta);
+        }
+
+        message.appendChild(avatar);
+        message.appendChild(content);
+        messages.appendChild(message);
+
+        scrollToBottom();
+        return message;
+    }
+
+    function addTyping() {
+        const message = document.createElement("div");
+        message.className = "message assistant";
+        message.id = "typingMessage";
+
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar assistant-avatar";
+        avatar.textContent = "✦";
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+
+        const name = document.createElement("div");
+        name.className = "message-name";
+        name.textContent = "Qanoon AI";
+
+        const typing = document.createElement("div");
+        typing.className = "typing";
+        typing.innerHTML = "<span></span><span></span><span></span>";
+
+        const label = document.createElement("div");
+        label.className = "message-meta";
+        label.textContent = "Finding relevant legal information...";
+
+        content.append(name, typing, label);
+        message.append(avatar, content);
+        messages.appendChild(message);
+
+        scrollToBottom();
+    }
+
+    async function sendQuestion(question) {
+        question = question.trim();
+
+        if (!question || isSending) return;
+
+        isSending = true;
+        sendBtn.disabled = true;
+
+        addMessage("user", question);
+
+        // Clear the input immediately, so the next question can be typed.
+        input.value = "";
+        input.style.height = "auto";
+
+        addTyping();
+
+        try {
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    question: question
+                })
+            });
+
+            const data = await response.json();
+
+            const typingMessage = document.getElementById("typingMessage");
+            if (typingMessage) typingMessage.remove();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "The server could not answer your question."
+                );
+            }
+
+            const answer = data.answer ||
+                "I couldn't generate an answer. Please try asking another question.";
+
+            addMessage("assistant", answer, {
+                sources: data.sources,
+                timings: {
+                    retrieval: data.retrieval_time_ms,
+                    generation: data.generation_time_ms
+                }
+            });
+
+        } catch (error) {
+            const typingMessage = document.getElementById("typingMessage");
+            if (typingMessage) typingMessage.remove();
+
+            addMessage(
+                "assistant",
+                "Sorry, I couldn't get a response from the server.\n\n" +
+                error.message +
+                "\n\nPlease check that FastAPI is running and try again."
+            );
+        } finally {
+            isSending = false;
+            sendBtn.disabled = false;
+            input.focus();
+            scrollToBottom();
+        }
+    }
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        sendQuestion(input.value);
+    });
+
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    input.addEventListener("input", function() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 150) + "px";
+    });
+
+    document.querySelectorAll(".suggestion").forEach(button => {
+        button.addEventListener("click", function() {
+            sendQuestion(button.dataset.question);
+        });
+    });
+
+    newChatBtn.addEventListener("click", function() {
+        if (isSending) return;
+
+        messages.replaceChildren();
+        welcome.style.display = "flex";
+        input.value = "";
+        input.style.height = "auto";
+        input.focus();
+        chatArea.scrollTop = 0;
+    });
+
+    input.focus();
+</script>
+</body>
+</html>
